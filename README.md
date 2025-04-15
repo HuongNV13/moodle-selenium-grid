@@ -7,7 +7,7 @@ All the necessary configurations are included to get you started quickly without
 1. Install Docker and Docker Compose on your machine.
 2. Clone this repository to your local machine.
 3. Navigate to the cloned repository directory.
-4. Run the following command to start the Selenium Grid and Moodle containers:
+4. Run the following command to start the Selenium Grid and Browsers containers:
    ```bash
    docker-compose up -d
    ```
@@ -18,7 +18,7 @@ All the necessary configurations are included to get you started quickly without
    127.0.0.1 localhost behat.test
    ```
 2. Open your Moodle `config.php` in your preferred editor.
-3. Add the following line to the `config.php` file:
+3. Add the following lines to the `config.php` file:
     ```php
     $CFG->behat_wwwroot = 'http://behat.test';
     $CFG->behat_profiles = [
