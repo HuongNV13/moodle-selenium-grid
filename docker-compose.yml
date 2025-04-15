@@ -1,50 +1,57 @@
+networks:
+  grid:
+    driver: bridge
+
+x-node-common: &node-common
+  shm_size: 2gb
+  depends_on:
+    - selenium-hub
+  environment:
+    - SE_EVENT_BUS_HOST=selenium-hub
+    - SE_EVENT_BUS_PUBLISH_PORT=4442
+    - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
+  healthcheck:
+    test: ["CMD", "curl", "-f", "http://localhost:5555/status"]
+    interval: 30s
+    timeout: 10s
+    retries: 5
+  extra_hosts:
+    - "behat.test:host-gateway"
+  networks:
+    - grid
+  restart: unless-stopped
+
 services:
-  chrome:
-    image: selenium/node-chrome:latest
-    shm_size: 2gb
-    depends_on:
-      - selenium-hub
-    environment:
-      - SE_EVENT_BUS_HOST=selenium-hub
-      - SE_NODE_MAX_SESSIONS=5
-      - SE_NODE_OVERRIDE_MAX_SESSIONS=true
-    extra_hosts:
-      - "behat.test:host-gateway"
-    ports:
-      - "5900:5900"
-
-  firefox:
-    image: selenium/node-firefox:latest
-    shm_size: 2gb
-    depends_on:
-      - selenium-hub
-    environment:
-      - SE_EVENT_BUS_HOST=selenium-hub
-      - SE_NODE_MAX_SESSIONS=5
-      - SE_NODE_OVERRIDE_MAX_SESSIONS=true
-    extra_hosts:
-      - "behat.test:host-gateway"
-    ports:
-      - "5901:5900"
-
-  edge:
-    image: selenium/node-edge:latest
-    shm_size: 2gb
-    depends_on:
-      - selenium-hub
-    environment:
-      - SE_EVENT_BUS_HOST=selenium-hub
-      - SE_NODE_MAX_SESSIONS=5
-      - SE_NODE_OVERRIDE_MAX_SESSIONS=true
-    extra_hosts:
-      - "behat.test:host-gateway"
-    ports:
-      - "5902:5900"
-
   selenium-hub:
     image: selenium/hub:latest
     container_name: selenium-hub
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4444/wd/hub/status"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    networks:
+      - grid
     ports:
       - "4442:4442"
       - "4443:4443"
       - "4444:4444"
+    restart: unless-stopped
+
+  chrome:
+    <<: *node-common
+    image: selenium/node-chrome:latest
+    ports:
+      - "5900:5900"  # VNC Chrome
+
+  firefox:
+    <<: *node-common
+    image: selenium/node-firefox:latest
+    ports:
+      - "5901:5900"  # VNC Firefox
+
+  edge:
+    <<: *node-common
+    image: selenium/node-edge:latest
+    ports:
+      - "5902:5900"  # VNC Edge
