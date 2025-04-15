@@ -13,9 +13,14 @@ All the necessary configurations are included to get you started quickly without
    ```
 
 ## Usage instructions
-1. Open your Moodle `config.php` in your preferred editor.
-2. Add the following line to the `config.php` file:
+1. Set up the test host e.g. 'behat.test' in your `/etc/hosts` file:
+   ```
+   127.0.0.1 localhost behat.test
+   ```
+2. Open your Moodle `config.php` in your preferred editor.
+3. Add the following line to the `config.php` file:
     ```php
+    $CFG->behat_wwwroot = 'http://behat.test';
     $CFG->behat_profiles = [
         'chrome' => [
             'browser' => 'chrome',
@@ -48,11 +53,11 @@ All the necessary configurations are included to get you started quickly without
     ];
    ```
    Or you can use Andrew's [Moodle Behat Browser configuration utility](https://github.com/andrewnicols/moodle-browser-config) to generate the browser configuration for you.
-3. Run behat, specifying one of the defined browsers as a profile, for example:
+4. Run behat, specifying one of the defined browsers as a profile, for example:
     ```bash
     vendor/bin/behat --profile=chrome --config=/moodledata_behat/behatrun/behat/behat.yml --tags=@core_ai
     ```
-4. The supported profiles are:
+5. The supported profiles are:
    - `chrome` for latest Google Chrome
    - `firefox` for latest Mozilla Firefox
    - `edge` for latest Microsoft Edge
