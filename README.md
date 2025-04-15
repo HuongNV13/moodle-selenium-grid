@@ -51,6 +51,10 @@ All the necessary configurations are included to get you started quickly without
     ```bash
     vendor/bin/behat --profile=chrome --config=/moodledata_behat/behatrun/behat/behat.yml --tags=@core_ai
     ```
+4. The supported profiles are:
+   - `chrome` for latest Google Chrome
+   - `firefox` for latest Mozilla Firefox
+   - `edge` for latest Microsoft Edge
 
 
 ## Using VNC to view behat tests
