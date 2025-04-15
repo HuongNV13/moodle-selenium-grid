@@ -47,6 +47,7 @@ All the necessary configurations are included to get you started quickly without
         ],
     ];
    ```
+   Or you can use Andrew's [Moodle Behat Browser configuration utility](https://github.com/andrewnicols/moodle-browser-config) to generate the browser configuration for you.
 3. Run behat, specifying one of the defined browsers as a profile, for example:
     ```bash
     vendor/bin/behat --profile=chrome --config=/moodledata_behat/behatrun/behat/behat.yml --tags=@core_ai
