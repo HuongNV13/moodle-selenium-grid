@@ -30,6 +30,14 @@ All the necessary configurations are included to get you started quickly without
                         'args' => [
                             'no-sandbox',
                             'no-gpu',
+                            'disable-save-password-bubble',
+                        ],
+                        'prefs' => [
+                            // Disable the Credential service.
+                            'credentials_enable_service' => false,
+                            // Disable the Password manager.
+                            'profile.password_manager_enabled' => false,
+                            'profile.password_manager_leak_detection' => false,
                         ],
                     ],
                 ],
