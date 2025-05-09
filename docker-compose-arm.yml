@@ -1,0 +1,55 @@
+networks:
+  grid:
+    driver: bridge
+
+x-node-common: &node-common
+  shm_size: 2gb
+  depends_on:
+    - selenium-hub
+  environment:
+    - SE_EVENT_BUS_HOST=selenium-hub
+    - SE_EVENT_BUS_PUBLISH_PORT=4442
+    - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
+  healthcheck:
+    test: ["CMD", "curl", "-f", "http://localhost:5555/status"]
+    interval: 30s
+    timeout: 10s
+    retries: 5
+  extra_hosts:
+    - "behat.test:host-gateway"
+  networks:
+    - grid
+  restart: unless-stopped
+
+services:
+  selenium-hub:
+    image: selenium/hub:latest
+    container_name: selenium-hub
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4444/wd/hub/status"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    networks:
+      - grid
+    ports:
+      - "4442:4442"
+      - "4443:4443"
+      - "4444:4444"
+    restart: unless-stopped
+
+  chrome:
+    <<: *node-common
+    build:
+      context: ./assets/NodeChromium
+      dockerfile: Dockerfile
+    ports:
+      - "5900:5900"  # VNC Chrome
+
+  firefox:
+    <<: *node-common
+    build:
+      context: ./assets/NodeFirefox
+      dockerfile: Dockerfile
+    ports:
+      - "5901:5900"  # VNC Firefox
