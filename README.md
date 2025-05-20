@@ -14,7 +14,8 @@ All the necessary configurations are included to get you started quickly without
     If you are using **AMD64** architecture:
 
     ```bash
-    docker-compose up -d
+    docker compose pull
+    docker compose up -d
     ```
 
     If you are using **macOS** with **Apple Silicon chip** or **Linux/ARM**:
