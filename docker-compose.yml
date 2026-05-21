@@ -38,9 +38,10 @@ services:
       - "4444:4444"
     restart: unless-stopped
 
+  # arm64: set CHROME_IMAGE=selenium/node-chromium:latest in .env
   chrome:
     <<: *node-common
-    image: selenium/node-chrome:latest
+    image: ${CHROME_IMAGE:-selenium/node-chrome:latest}
     ports:
       - "5900:5900"  # VNC Chrome
 
@@ -50,8 +51,46 @@ services:
     ports:
       - "5901:5900"  # VNC Firefox
 
-  edge:
-    <<: *node-common
-    image: selenium/node-edge:latest
+  chrome_video:
+    image: selenium/video:latest
+    profiles: [video]
+    volumes:
+      - ./videos:/videos
+    depends_on:
+      - chrome
+    environment:
+      - DISPLAY_CONTAINER_NAME=chrome
+      - SE_NODE_GRID_URL=http://selenium-hub:4444
+      - SE_VIDEO_FILE_NAME=auto
+      - SE_RETAIN_ON_FAILURE=true
+    networks:
+      - grid
+
+  firefox_video:
+    image: selenium/video:latest
+    profiles: [video]
+    volumes:
+      - ./videos:/videos
+    depends_on:
+      - firefox
+    environment:
+      - DISPLAY_CONTAINER_NAME=firefox
+      - SE_NODE_GRID_URL=http://selenium-hub:4444
+      - SE_VIDEO_FILE_NAME=auto
+      - SE_RETAIN_ON_FAILURE=true
+    networks:
+      - grid
+
+  file_browser:
+    image: filebrowser/filebrowser:latest
+    profiles: [video]
+    container_name: file_browser
+    restart: always
     ports:
-      - "5902:5900"  # VNC Edge
+      - "8081:80"
+    volumes:
+      - ./videos:/srv
+    environment:
+      - FB_NOAUTH=true
+    networks:
+      - grid
