@@ -15,8 +15,9 @@ All the necessary configurations are included to get you started quickly without
     cp .env.example .env
     ```
 
-    - **AMD64**: no change needed — `selenium/node-chrome:latest` is the default.
-    - **arm64** (Apple Silicon / Linux ARM): set `CHROME_IMAGE=selenium/node-chromium:latest` in `.env`.
+    - **AMD64**: no change needed — `selenium/node-chrome` is the default.
+    - **arm64** (Apple Silicon / Linux ARM): set `CHROME_IMAGE_NAME=selenium/node-chromium` in `.env`.
+    - All images (hub, nodes, video) are pinned to the same `SELENIUM_VERSION` to keep the hub and nodes protocol-compatible. Bump it in `.env` to upgrade.
 
 
 5. Start the grid:

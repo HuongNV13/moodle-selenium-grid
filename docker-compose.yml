@@ -21,9 +21,18 @@ x-node-common: &node-common
     - grid
   restart: unless-stopped
 
+x-video-common: &video-common
+  image: selenium/video:${SELENIUM_VERSION:-4.41.0-20260222}
+  profiles: [video]
+  volumes:
+    - ./videos:/videos
+  networks:
+    - grid
+  restart: unless-stopped
+
 services:
   selenium-hub:
-    image: selenium/hub:latest
+    image: selenium/hub:${SELENIUM_VERSION:-4.41.0-20260222}
     container_name: selenium-hub
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:4444/wd/hub/status"]
@@ -38,24 +47,21 @@ services:
       - "4444:4444"
     restart: unless-stopped
 
-  # arm64: set CHROME_IMAGE=selenium/node-chromium:latest in .env
+  # arm64: set CHROME_IMAGE_NAME=selenium/node-chromium in .env
   chrome:
     <<: *node-common
-    image: ${CHROME_IMAGE:-selenium/node-chrome:latest}
+    image: ${CHROME_IMAGE_NAME:-selenium/node-chrome}:${SELENIUM_VERSION:-4.41.0-20260222}
     ports:
       - "5900:5900"  # VNC Chrome
 
   firefox:
     <<: *node-common
-    image: selenium/node-firefox:latest
+    image: selenium/node-firefox:${SELENIUM_VERSION:-4.41.0-20260222}
     ports:
       - "5901:5900"  # VNC Firefox
 
   chrome_video:
-    image: selenium/video:latest
-    profiles: [video]
-    volumes:
-      - ./videos:/videos
+    <<: *video-common
     depends_on:
       - chrome
     environment:
@@ -63,14 +69,9 @@ services:
       - SE_NODE_GRID_URL=http://selenium-hub:4444
       - SE_VIDEO_FILE_NAME=auto
       - SE_RETAIN_ON_FAILURE=true
-    networks:
-      - grid
 
   firefox_video:
-    image: selenium/video:latest
-    profiles: [video]
-    volumes:
-      - ./videos:/videos
+    <<: *video-common
     depends_on:
       - firefox
     environment:
@@ -78,14 +79,12 @@ services:
       - SE_NODE_GRID_URL=http://selenium-hub:4444
       - SE_VIDEO_FILE_NAME=auto
       - SE_RETAIN_ON_FAILURE=true
-    networks:
-      - grid
 
   file_browser:
     image: filebrowser/filebrowser:latest
     profiles: [video]
     container_name: file_browser
-    restart: always
+    restart: unless-stopped
     ports:
       - "8081:80"
     volumes:
